@@ -1,0 +1,131 @@
+#include<iostream>
+using namespace std;
+
+
+//C++兼容C，但对于结构体，它升级成了： 类
+struct Stack
+{
+	//(可定义函数)
+	//成员函数
+	void Init(int c=10)
+	{
+		c++;
+		//....
+	}
+	void Push(int c = 10)
+	{
+		c++;//...
+	}
+
+	//成员变量
+	int* a; 
+	int top;
+	int capacity;
+};
+
+int main1()
+{
+	struct Stack s;
+	Stack s1;//在C++中，可用类的名称代表数据类型
+	s1.Init();
+	s1.Push(2);
+	s1.Push(3);
+	return 0;
+}
+
+class className
+{
+	//类体：由成员函数和成员变量组成
+};//后面带分号
+
+
+//访问限定符：
+//类外能访问：public(公有),
+//类外不能访问：protect(保护),private(私有)
+// 
+//class默认访问权限为private,
+//struct默认访问权限为public(内部可以使用访问限定符)
+class Data1
+{
+public://私有变公有
+	void Init(int year,int month,int day)
+	{
+		//year = year;//写法可行，但无法判断 year是哪个
+		_year = year;
+		_month = month;
+		day_ = day;
+	}
+
+private:
+	//类中一般对成员变量在 开头/末尾 加"_"
+	int _year;
+	int _month;
+	int day_;
+};
+int main2()
+{
+	Data1 d1;
+	class Data1 d2;
+	//d1.Init(2024, 1, 24);//此处需要访问权限
+	return 0;
+}
+
+
+//类域(本质是改变编译器的搜索规则)
+//编译器搜索规则：先在局部找，再去全局找，不会找到其他的域里面
+//顺序：局部，类域，全局
+class Data
+{
+	int a;//此处没开空间，因此是声明
+	void Init(int n = 4);
+};
+void Data::Init(int n )//此为缺省参数，因此在声明中给值
+{
+	a = 10;
+}
+
+
+
+class A3 {
+public:
+	void f2(){}
+};
+class A4 {
+	int a = 10;
+	void f2(){}
+};
+int main3()
+{
+	//一般情况下，计算类时，若类中有函数不计算它占用空间
+	//若类中只有函数，不计算，大小1字节，表示占位(表示它是存在的)
+	cout << sizeof(A3) << endl;
+	cout << sizeof(A4) << endl;
+	return 0;
+}
+
+
+class A5 {
+public:
+	void f2() {
+		//此 f2()在公共代码区
+		cout << "void f2()" << endl;
+	}
+};
+
+
+int main()
+{
+	A5 a2;
+	A5* p1 = &a2;
+	p1->f2();
+
+	//编译错误
+	//运行错误
+	//正常运行(正确)
+	A5* p2 = nullptr;
+	p2->f2();
+	//f2()不存储在类中
+	//没有进行解引用操作
+	//在编译时就已确定，会直接去公共代码区找
+	return 0;
+}
