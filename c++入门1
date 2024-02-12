@@ -1,0 +1,57 @@
+#include<stdio.h>
+#include<iostream>
+using namespace std;
+
+//包含头文件时，若两边存在 重名 的定义，会发生冲突
+//可使用命名空间(namespace)
+//若使用了相同名字的namespace ，则会合并(若存在 重名的定义，仍会发生冲突)
+
+int x = 10;
+// ::域作用限定符,::的左边不给则是全局域
+//影响访问，但生命周期不受影响
+namespace bit1
+{
+	int x = 0;//全局变量
+	struct Node
+	{
+		int a;
+	};
+}
+namespace bit2
+{
+	int x = 1;//全局变量
+}
+
+//编译器搜索原则
+//1.当前局部域  2.全局域
+//3.如果指定了，直接去指定域搜索
+int main1()
+{
+	int x = 1;
+	printf("%d\n", x);//访问 就近原则
+	printf("%d\n", ::x);//
+	printf("%d\n", bit1::x);//
+	printf("%d\n", bit2::x);//
+
+	struct bit1::Node phead;
+
+	return 0;
+}
+
+#include<iostream>
+int main2()
+{
+	std::cout << "hello world" << std::endl;
+	std::cout << "hello world" << std::endl;
+	return 0;
+}
+
+//std命名空间是C++中标准库类型对象的命名空间。
+#include<iostream>
+using namespace std;//打开命名空间，相当于全局(仍然局部优先)
+int main()
+{
+	cout << "hello world" << endl;
+	cout << "hello world" << endl;
+	return 0;
+}
