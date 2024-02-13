@@ -1,0 +1,132 @@
+#include<iostream>
+using namespace std;
+
+
+int main1()
+{
+	const int i = 0;
+	int j = 1;
+	const char* p = "xzxxxxx";
+	cout << &i  << endl;
+	cout << &j << endl;
+	cout << &p << endl;
+	//p在栈上，但内容存在常量区
+	return 0;
+}
+
+class A {
+public:
+	void  Print()
+	{
+		cout << this << endl;
+		//代码#：cout << _a << endl;
+		cout << "aa" << endl;
+	}
+private:
+	int _a;
+};
+int mian2()
+{
+	//思考：为什么代码#加入前能运行？加入后不能运行？
+	A* p = nullptr;
+	p->Print();
+	(*p).Print();
+	return 0;
+}
+
+
+
+//构造函数
+//1.定义：是特殊的成员函数，负责初始化对象
+//2.特征：
+//(1)函数名与类名相同
+//(2)无返回值
+//(3)对象实例化时编译器自动调用对应的构造函数
+//(4)构造函数可以重载
+class Data
+{
+public:
+	Data()
+	{
+		_year = 1;
+		_month = 1;
+	}
+	//
+	Data(int year, int month)
+	{
+		_year = 1;
+		_month = 1;
+	}
+	//允许存在半缺省，但不允许存在全缺省
+	Data(double year/*=4*/, int month=3)
+	{
+		_year = 1;
+		_month = 1;
+	}
+	void Print()
+	{
+		cout << _year << endl;
+	}
+private:
+	int _year;
+	int _month;
+};
+
+int main3()
+{
+	//对象实例化时编译器自动调用对应的构造函数
+	Data d1;
+	d1.Print();
+	Data d2(2024, 1);
+	d2.Print();
+	return 0;
+}
+
+class A1
+{
+public:
+	A1()
+	{
+		cout << "A1()" << endl;
+		_a = 0;
+	}
+	int _a;
+
+};
+
+class Date
+{
+public:
+	void Print()
+	{
+		cout << _year << "-" << _month << "-" << _day << endl;
+	}
+private:
+	//此处是声明给缺省值
+	int _year=1;
+	int _month;
+	int _day;
+
+	A1 _aa;
+};
+int main4()
+{
+	Date d1;
+	d1.Print();
+	return 0;
+}
+
+class Stack
+{
+	Stack()
+	{
+		cout << "aa"<<endl;
+	}
+};
+//两个栈实现队列
+class MyQueue
+{
+private:
+	Stack s1;
+	Stack s2;
+};
