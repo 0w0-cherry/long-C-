@@ -1,0 +1,141 @@
+#include<iostream>
+using namespace std;
+//class ob
+//{
+//public:
+//	void func()
+//	{
+//		cout << "void func()" << endl;
+//	}
+//};
+//typedef void(ob::* pobfunc)();
+//int main1()
+//{
+//	pobfunc p = &ob::func;
+//	ob tmp;
+//	(tmp.*p  )();
+//
+//	int i, j;
+//
+//	cout << (i = j = 10) << endl;
+//	return 0;
+//}
+//class Date
+//{
+//public:
+//private:
+//	int _year;
+//	int _month;
+//	int _day;
+//};
+class A
+{
+public: 
+	A(int a)
+		:_a(a)
+	{
+		cout << "a" << endl;
+	}
+	A* operator&()
+	{
+		return this;
+	}
+	const A* operator&() const
+	{
+		return this;
+	}
+private:
+	int _a;
+};
+
+class Date
+{
+public:
+	Date(int year, int month, int day, int& x)
+		:_ref(x)//初始化列表，不能在当前列表多次初始化
+		,_aa(10)
+		,_p((int*)malloc(10))
+{
+	_year = year;
+	_month = month;
+	_day = day;
+	_ref = x;
+	//_n = 5;//_n不可修改
+}
+
+	Date(int year, int month, int day,int x)
+	: _month(2)
+	, _n(10)
+	,_aa(10)
+	,_ref(x)
+{
+	_year = year;
+	_month = month;
+	_day = day;
+}
+	 
+//初始化列表是每个成员变量定义初始化的位置
+//可使用初始化列表 或 函数体内赋值
+//建议使用初始化列表
+
+private:
+	int _year=1;
+	int _month;
+	int _day;
+	int* _p;
+
+	//必须初始化，初始化共两处(此处缺省或初始化列表)
+	const int _n=5;
+	int& _ref;//引用必须初始化
+	A _aa;
+};
+
+
+//成员变量在类中的声明次序就是初始化列表中的初始化顺序，与其在初始化列表的先后次序无关。
+class B
+{
+public:
+	B(int a1,int a2)
+		:_a1(a1)
+		,_a2(a2)
+	{}
+private:
+	int _a1;
+	int _a2;
+	int _a = 1;
+	int* _p = (int*)malloc(4);
+	A aa1 = 1;
+};
+
+int main10()
+{
+	B aa2 = { 1,2 };//隐式强制类型转换
+	return 0;
+}
+int n = 0;
+class D
+{
+public:
+	D()
+	{
+		n++;
+	}
+
+	D(const D& aa)
+	{
+		n++;
+	}
+};
+D func()
+{
+	D aa;
+	return aa;
+}
+int main()
+{
+	D aa1;
+	D aa2;
+	func();//此处被优化，原4次，先3次
+	cout << n << endl;
+	return 0;
+}
