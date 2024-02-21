@@ -1,0 +1,93 @@
+1.sizeof运算符，编译时，根据类型大小定义，自定义根据内存对齐规则计算对象大小
+2.strlen函数，运行时确定
+3.析构函数可显示调用(但可能空间被多次释放)
+
+内存管理
+一.
+
+
+二.perator new与operator delete函数（重点）
+1.是系统提供的全局函数
+2.在底层调用operator new和operator delete全局函数实现。这两个函数是对malloc和free函数的封装
+3.函数底层+抛异常：
+(1)operator new对malloc的封装，失败抛异常，实现new
+(2)operator delete对malloc 和 free封装
+(3)嵌套new不会死循环
+Stack* pst=new Stack;
+class Stack
+{
+public:
+    Stack()
+    {
+        int a=new int[4];    
+    }
+}
+(4)异常在operator new抛出
+(5)perator new：先开空间，再构造
+(6)perator delete:先析构，再销毁
+
+(7)内存开辟的细节
+A* ptr1 = new A;  // operator new + 1次构造
+
+operator new[]，不止对operator new进行封装
+
+析构函数显示写：
+申请40字节，实际44字节
+头部额外申请4字节，用于存储元素个数，返回第一个元素的地址(因为析构时，需要元素个数)
+A* ptr2 = new A[10]; // operator new[] + 10次构造
+
+析构函数不显示写：
+默认生成的析构不需要元素个数，所以被编译器优化
+A* ptr2 = new A[10];//40字节
+
+对于内置类型，不需要析构等,因此编译器不额外开辟空间存储元素个数
+int* p1 = new int[10];//40字节
+4.匹配使用，不匹配则结果不确定(operator new[] 和 operator new的区别)
+int main()
+{
+    //可运行
+    int* p1 = new int[10];
+    delete p1;
+
+    //正常情况下，析构函数显示写则不可运行(但具体看编译器会不会在头部开空间)
+    //原因：开辟44字节空间，但返回的并非头部地址。因此delete从地址的中间开始释放，报错
+        //同时，这也是 operator new[] 和 operator new的区别 
+    A* p2 = new A[10];
+    delete p2;//从中间释放
+
+    return 0;
+}
+5.定位new(效果与new 和 delete 等价)
+(1)功能：显示调用构造函数，对已有空间初始化(一般是配合内存池使用)
+(2)格式：
+new(地址) type
+new(地址) type(initializer-list)//初始化，如果构造函数有参数时，此处需要传参
+
+实例：
+A* p2 = (A*)operator new(sizeof(A));
+1 ： new(p2)A();
+2 ： new(p2)A(10);
+3 ： new(p2)A;
+
+
+三.malloc/free和new/delete的区别
+1.用法区别：
+(1)malloc和free是函数，new和delete是操作符
+(2)malloc申请的空间不会初始化，new可以初始化
+(3)malloc申请空间时，需要手动计算空间大小并传递，new只需在其后跟上空间的类型即可，
+如果是多个对象，[]中指定对象个数即可
+(4)malloc的返回值为void*, 在使用时必须强转，new不需要，因为new后跟的是空间的类型
+(5)malloc申请空间失败时，返回的是NULL，因此使用时必须判空，new不需要，但是new需
+要捕获异常
+2.底层特性区别:
+(1)申请自定义类型对象时，malloc/free只会开辟空间，不会调用构造函数与析构函数，而new
+在申请空间后会调用构造函数完成对象的初始化，delete在释放空间前会调用析构函数完成空间中资源的清理
+
+因此，使用 new/delete 更方便
+
+四.内存泄漏
+1.含义：失去了对该段内存的控制，因而造成了内存的浪费。
+2.危害：长期运行的程序出现内存泄漏，影响很大，如操作系统、后台服务等等，出现内存泄漏会导致响应越来越慢，最终卡死。
+3.解决方案：
+(1)事前预防型：智能指针等
+(2)事后查错型：泄漏检测工具等
