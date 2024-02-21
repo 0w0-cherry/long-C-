@@ -1,0 +1,94 @@
+#include<iostream>
+using namespace std;
+
+
+//new,delete:操作符
+int main1()
+{
+	//创建对象
+	int* p0 = (int*)malloc(sizeof(int));
+	int* p1 = new int;
+	int* p2 = new int[10];//10个int对象
+	delete p0;
+	delete p1;
+	delete[] p2;
+
+	//2.初始化
+	int* p3 = new int(10);//new一个对象，初始化值10
+	int* p4 = new int[10] {1, 2, 3, 4, 5};//剩余数组元素初始化为0
+	delete p3;
+	delete[] p4;
+
+	return 0;
+}
+
+struct ListNode
+{
+	ListNode* _next;
+	ListNode* _prev;
+	int _val;
+	ListNode(int val)
+		:_next(nullptr)
+		, _prev(nullptr)
+		, _val(val)
+	{}
+};
+struct ListNode* CreateListNode(int val)
+{
+	struct ListNode* newnode = (struct ListNode*)malloc(sizeof(struct ListNode));
+	if (newnode == NULL)
+	{
+		perror("malloc fail");
+		return NULL;
+	}
+
+	newnode->_next = NULL;
+	newnode->_prev = NULL;
+	newnode->_val = val;
+	return newnode;
+}
+ListNode* CreatList(int n)
+{
+	ListNode head(-1);
+	ListNode* tail = &head;
+	int val;
+	for (size_t i = 0; i < n; i++)
+	{
+		cin >> val;
+		tail->_next = new ListNode(val);
+		tail = tail->_next;
+	}
+	return head._next;
+}
+void func()
+{
+	int n = 1;
+	while (1)
+	{
+		int* p = new int[1024 * 1024 * 100];
+		//int* p = (int*)malloc(1024 * 1024*4);
+
+		cout << n << "->" << p << endl;
+		++n;
+	}
+}
+int main()
+{
+	// 3、自定义类型，开空间+构造函数
+    // 4、new失败了以后抛异常，不需要手动检查
+	ListNode* node1 = new ListNode(1);
+	ListNode* node2 = new ListNode(2);
+	ListNode* node3 = new ListNode(3);
+	ListNode* list1 = CreatList(5);
+
+	//开辟空间时会获取异常，跨函数跳转
+	try
+	{
+		func();
+	}
+	catch (const exception& e)
+	{
+		cout << e.what() << endl;
+	}
+	return 0;
+}
