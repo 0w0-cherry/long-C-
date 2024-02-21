@@ -1,0 +1,66 @@
+1.模板不能声明和定义分离
+
+一.函数模板实例化
+1.解决方案(1,2,3)可解决参数不同的情况
+2.函数与模板的选择：
+(1)模板和函数可同时存在,但优先选择函数
+(2)优先选择函数：无论有无模板，只要参数类型完全符合函数(权限只能缩小不能放大)
+(3)优先先择模板：有函数，但参数不完全匹配。此时有模板
+(4)强制调用模板：Add<int>(a1,a2)
+//函数函数模板实例化：编译通过推出类型，用函数模板，生成对应函数，这个过程叫做模板实例化
+//而函数模板中的参数叫做：模板参数
+编译器自行判断 模板和数据类型，并生成对应函数
+template<typename T>//类型名为 T
+void Swap(T& x, T& y)
+{
+    T tmp = x;
+    x = y;
+    y = tmp;
+}
+//swap也可用库中，格式：    std::swap(a, b);
+
+template<class T>
+T Add(const T& left, const T& right)
+{
+    return left + right;
+}
+
+//模板和函数可同时存在
+int Add(const int& left, const int& right)
+{
+    return left + right;
+}
+
+//通用加法函数
+template<class T1,class T2>
+T1 Add(T1 left, T2 right)
+{
+    return left + right;
+}
+int main()
+{
+
+
+        int a = 3, b = 2;
+    
+
+    char x = 'a',y = 'b';
+        两次调用的并非是一个函数
+        Swap(a, b);
+    Swap(x, y);
+ 
+       //推演
+    //cout << Add(a, y) << endl;//存在歧义，错误
+    //解决方案1：强转
+    cout << Add((char)a, y) << endl;
+    cout << Add(a, (int)y) << endl;
+
+    //解决方案2：显示实例化(能正常传参的原因是：发生隐式类型转换)
+    cout << Add<int>(a, y) << endl;//y隐式类型转换成int
+    cout << Add<double>(a, y) << endl;//a、y隐式类型转换成double
+     
+           //解决方案3:加模板参数(如“通用加法函数”)
+    cout << Add(a, y) << endl;
+
+    return 0;
+}
