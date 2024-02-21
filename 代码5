@@ -1,0 +1,279 @@
+#include<iostream>
+using namespace std;
+
+
+//打印日期
+//int main() {
+//    int a, b;
+//    while (cin >> a >> b) {
+//        int arr[] = { 0,31,28,31,30,31,30,31,31,30,31,30,31 };
+//        if ((a % 4 == 0 && a % 10 != 0) || a % 400 == 0)
+//            arr[2] = 29;
+//
+//        int month = 0;
+//        int day = b;
+//        while (arr[month] < day)
+//        {
+//            day -= arr[month];
+//            month++;
+//        }
+//        printf("%d-%02d-%02d\n", a, month, day);
+//    }
+//}
+//
+//int main() {
+//	static int a = 10;
+//	int& b = a;
+//	b = 30;
+//	cout << a;
+//	return 0;
+//}
+
+////求1+2+3+...+n，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?B:C）。
+//class Solution {
+//public:
+//    int Sum_Solution(int n) {
+//        //通过与运算判断n是否为正数，以结束递归
+//        n && (n += Sum_Solution(n - 1));
+//        return n;
+//    }
+//};
+//int main()
+//{
+//    Solution a;
+//    cout<<a.Sum_Solution(5);
+//
+//    return 0;
+//}
+
+//class Date
+//{
+//	friend ostream& operator<<(ostream& _cout, const Date& d);
+//	friend istream& operator>>(istream& _cin, Date& d);
+//public:
+//	Date(int year = 1900, int month = 1, int day = 1)
+//		: _year(year)
+//		, _month(month)
+//		, _day(day)
+//	{}
+//private:
+//	int _year;
+//	int _month;
+//	int _day;
+//};
+//ostream& operator<<(ostream& _cout, const Date& d)
+//{
+//	_cout << d._year << "-" << d._month << "-" << d._day;
+//	return _cout;
+//}
+//istream& operator>>(istream& _cin, Date& d)
+//{
+//	_cin >> d._year;
+//	_cin >> d._month;
+//	_cin >> d._day;
+//	return _cin;
+//}
+//int main()
+//{
+//	Date d;
+//	cin >> d;
+//	cout << d << endl;
+//	return 0;
+//}
+
+
+//Date可直接获取Time的成员函数和变量(无视访问权限)
+//Time不能获取Date
+//class Time
+//{
+//	friend class Date; 
+//	//声明日期类为时间类的友元类，
+//	//则在日期类中就直接访问Time类中的私有成员变量
+//public:
+//	Time(int hour = 0, int minute = 0, int second = 0)
+//		: _hour(hour)
+//		, _minute(minute)
+//		, _second(second)
+//	{}
+//
+//private:
+//	int _hour;
+//	int _minute;
+//	int _second;
+//};
+//class Date
+//{
+//public:
+//	Date(int year = 1900, int month = 1, int day = 1)
+//		: _year(year)
+//		, _month(month)
+//		, _day(day)
+//	{}
+//
+//	void SetTimeOfDate(int hour, int minute, int second)
+//	{
+//		// 直接访问时间类私有的成员变量
+//		_t._hour = hour;
+//		_t._minute = minute;
+//		_t._second = second;
+//	}
+//
+//private:
+//	int _year;
+//	int _month;
+//	int _day;
+//	Time _t;
+//};
+//
+//
+//class B1
+//{
+//private:
+//	int _b1;
+//};
+//class A1
+//{
+//private:
+//	int _a1;
+//	int _a2;
+//};
+////对比
+//class A2
+//{
+////private:
+//public:
+//	//1.受到A2类域的限制
+//	//2.内部类天生是外部类的友元类,
+//	//B可访问A，A不能访问B(私有或保护型数据)
+//	class B2
+//	{
+//		//friend class A2;
+//		void func(A2* p)
+//		{
+//			p->_a1++;
+//		}
+//	//private:
+//		int _b1;
+//	};
+////private:
+//	int _a1;
+//	int _a2;
+//	//B可访问A，A不能访问B(私有或保护型数据)
+//	//可使用友元解决
+//	//void fx(B2* ptr)
+//	//{
+//	//	ptr->_b1++;
+//	//}
+//};
+//int main10()
+//{
+//	A1 a;
+//	A2 b;
+//	cout<<sizeof(a)<<endl;
+//	cout<<sizeof(b)<<endl;
+//
+//	A2::B2 b;
+//	A2 c;
+//	return 0;
+//}
+//
+//class A
+//{
+//public:
+//	A(int a = 0)
+//		:_a(a)
+//	{
+//		cout << "A(int a)" << endl;
+//	}
+//	~A()
+//	{
+//		cout << "~A()" << endl;
+//	}
+//private:
+//	int _a;
+//};
+//class Solution {
+//public:
+//	int Sum_Solution(int n) {
+//		//...
+//		return n;
+//	}
+//};
+//int main()
+//{
+//	A aa1;
+//	//A aa1();//编译器无法识别下面是一个函数声明，还是对象定义
+//	//匿名对象的特点
+//	//1.不用取名字，
+//	//2.生命周期只有这一行，因此下一行就会自动调用析构函数
+//	A();
+//	A aa2(2);
+//	// 匿名对象在这样场景下就很好用，当然还有一些其他使用场景
+//	Solution().Sum_Solution(10);
+//	return 0;
+//}
+
+
+//拷贝对象时的一些编译器优化拷贝对象时的一些编译器优化
+class A
+{
+public:
+	A(int a = 0)
+		:_a(a)
+	{
+		cout << "A(int a)" << endl;
+	}
+	A(const A& aa)
+		:_a(aa._a)
+	{
+		cout << "A(const A& aa)" << endl;
+	}
+	A& operator=(const A& aa)
+	{
+		cout << "A& operator=(const A& aa)" << endl;
+		if (this != &aa)
+		{
+			_a = aa._a;
+		}
+		return *this;
+	}
+	~A()
+	{
+		cout << "~A()" << endl;
+	}
+private:
+	int _a;
+};
+void f1( A aa)
+{}
+void f2(const A& aa)
+{
+	cout << "1" << endl;
+}
+int main()
+{
+	A aa3 = 2;//构造+拷贝构造->直接构造
+	const A& aa2 = 2;
+	f1(aa2);
+	f2(aa3);
+
+	//// 传值传参
+	//A aa1;
+	//f1(aa1);
+
+	//cout << endl;
+	//// 传值返回
+	//f2();
+	//cout << endl;
+	//// 隐式类型，连续构造+拷贝构造->优化为直接构造
+	//f1(1);
+	//// 一个表达式中，连续构造+拷贝构造->优化为一个构造
+	//f1(A(2));
+	//cout << endl;
+	//// 一个表达式中，连续拷贝构造+拷贝构造->优化一个拷贝构造 A aa2 = f2();
+	//cout << endl;
+	//// 一个表达式中，连续拷贝构造+赋值重载->无法优化
+	//aa1 = f2();
+	//cout << endl;
+	return 0;
+}
