@@ -92,3 +92,102 @@ int main()
 	}
 	return 0;
 }
+
+int main1()
+{
+	int* p1 = (int*)operator new(10 * 4);//开辟空间
+	//int* p2 = new int(10 * 4);//这是什么意思？
+	int* p3 = new int;//单个变量
+	int* p4 = new int[10];//数组形式
+	return 0;
+}
+class A
+{
+public:
+	A(int a = 0)
+		: _a(a)
+	{
+		cout << "A():" << this << endl;
+	}
+
+	~A()
+	{
+		cout << "~A():" << this << endl;
+	}
+private:
+	int _a;
+};
+class Stack
+{
+public:
+	Stack()
+	{
+		_a = (int*)malloc(sizeof(int) * 4);
+		_top = 0;
+		_capacity = 4;
+	}
+
+	~Stack()
+	{
+		free(_a);
+		_top = _capacity = 0;
+	}
+private:
+	int* _a;
+	int _top;
+	int _capacity;
+};
+int main2()
+{
+	A* ptr1 = new A;  // operator new + 1次构造
+
+	//operator new[]，不止对operator new进行封装
+	// 
+	//申请开辟40字节，实际44字节
+	//在头部额外申请4字节，用于存储元素个数。避免delete，不清楚元素个数等情况
+	//不返回头部地址，返回第一个元素的地址
+	A* ptr2 = new A[10]; // operator new[] + 10次构造
+
+	//对于内置类型，不需要析构等,因此编译器不额外开辟空间存储元素个数
+	int* p1 = new int[10];//40字节
+
+	//A* ptr2 = new A[10];//40字节
+	//且默认生成析构函数，默认生成的析构不需要元素个数，所以被编译器优化
+
+	delete ptr1; // 1次析构 + operator delete
+	delete[] ptr2; // 10次析构 + operator delete[]
+
+	Stack* pst = new Stack;
+	delete pst;
+
+	return 0;
+}
+
+
+//
+int main3()
+{
+	//可运行
+	int* p1 = new int[10];
+	delete p1;
+
+	//正常情况下，析构函数显示写则不可运行(但具体看编译器会不会在头部开空间)
+	//原因：开辟44字节空间，但返回的并非头部地址。因此delete从地址的中间开始释放，报错
+	//同时，这也是 operator new[] 和 operator new的区别
+	A* p2 = new A[10];
+	delete p2;//从中间释放
+
+	return 0;
+}
+
+int main4()
+{
+	//效果与new 和 delete 等价
+	A* p2 = (A*)operator new(sizeof(A));
+	//显示调用构造函数，对已有空间初始化
+	//new(指针) type(10) 或 new(指针) type()
+	new(p2)A();
+
+	p2->~A();
+	return 0;
+}
