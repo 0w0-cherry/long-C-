@@ -1,0 +1,16 @@
+成员函数在 局部/全局 都无法找到成员变量的数据，但代码为什么能够运行？
+class A {
+    int a = 10;
+    void Print(){ cout<<a<<endl; }
+};
+
+d1.Print()
+编译器处理后：
+类的成员函数
+class A {
+    int a = 10;
+    void Print(A* const this){ cout<<this->a<<endl; }
+};
+
+d1.Print(&d1);
+因此代码正常运行
