@@ -34,3 +34,4 @@ int* p4 = new int[10]{ 1,2,3,4,5 };//10个int对象，5个初始化，5个默认
 
 ListNode* node1 = new ListNode(5);//自定义类型，开空间+构造函数。
 ListNode* list1 = CreatList(5);//创建列表及结点数
+
