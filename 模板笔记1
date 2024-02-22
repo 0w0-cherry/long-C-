@@ -49,7 +49,7 @@ int main()
     Swap(x, y);
  
        //推演
-    //cout << Add(a, y) << endl;//存在歧义，错误
+    //cout << Add(a, y) << endl;//存在歧义，编译错误
     //解决方案1：强转
     cout << Add((char)a, y) << endl;
     cout << Add(a, (int)y) << endl;
