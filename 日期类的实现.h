@@ -2,9 +2,7 @@
 #include<iostream>
 using namespace std;
 class Date
-
 {
-
 public:
 
 	// 获取某年某月的天数
@@ -41,7 +39,6 @@ public:
 		_day = day;
 	}
 
-
 	// 拷贝构造函数
 
   // d2(d1)
@@ -52,7 +49,6 @@ public:
 		_month = d._month;
 		_day = d._day;
 	}
-
 
 	// 赋值运算符重载
 
@@ -67,7 +63,6 @@ public:
 		return *this;
 	}
 
-
 	// 析构函数
 
 	~Date()
@@ -76,8 +71,6 @@ public:
 		_month =-1;
 		_day = -1;
 	}
-
-
 
 	// 日期+=天数
 
@@ -99,8 +92,6 @@ public:
 		return *this;
 	}
 
-
-
 	// 日期+天数
 
 	Date operator+(int day)
@@ -109,8 +100,6 @@ public:
 		a += day;//调用：日期+=天数
 		return a;
 	}
-
-
 	// 日期-天数
 
 	Date operator-(int day)
@@ -119,8 +108,6 @@ public:
 		a -= day;//调用：日期-=天数
 		return a;
 	}
-
-
 	// 日期-=天数
 
 	Date& operator-=(int day)
@@ -152,6 +139,8 @@ public:
 		return *this;
 	}
 
+	//前置++和后置++的函数名都是 operator++
+	//因此为了区分，对参数进行不同的处理来区分：加形参构成重载来区分
 
 	//没有深拷贝，因此前置++和--没必要创建类
 	// 前置++
@@ -163,8 +152,6 @@ public:
 		return *this;
 	}
 
-
-
 	// 后置++
 	// d++ -> d.operator++(&d, 0)
 	Date operator++(int)
@@ -173,7 +160,6 @@ public:
 		*this += 1;
 		return ret;
 	}
-
 
 	// 后置--
 
@@ -184,8 +170,6 @@ public:
 		return ret;
 	}
 
-
-
 	// 前置--
 
 	Date& operator--()
@@ -193,7 +177,6 @@ public:
 		*this -= 1;
 		return *this;
 	}
-
 
 	// d1 > d2
 	// >运算符重载
@@ -209,15 +192,12 @@ public:
 		return 0;
 	}
 
-
-
 	// ==运算符重载
 
 	bool operator==(const Date& d)
 	{
 		return _year == d._year && _month == d._month && _day == d._day;
 	}
-
 
 	// 下面复用上面两个的实现
 	// >=运算符重载
@@ -227,8 +207,6 @@ public:
 
 		return operator>(d) || operator==(d);
 	}
-
-
 	// <运算符重载
 
 	bool operator < (const Date& d)
@@ -237,9 +215,6 @@ public:
 			return 0;
 		return 1;
 	}
-
-
-
 	// <=运算符重载
 
 	bool operator <= (const Date& d)
@@ -258,8 +233,6 @@ public:
 		}
 		return true;
 	}
-
-
 	// !=运算符重载
 
 	bool operator != (const Date& d)
@@ -280,7 +253,6 @@ public:
 			min = *this;
 			flag = -1;
 		}
-
 		int day = 0;
 		while (min < max)
 		{
@@ -291,15 +263,13 @@ public:
 		//	day = -day;
 		return day*flag;
 	}
-
-
+	friend ostream& operator<<(ostream& out, const Date& d);
+	friend istream& operator>>(istream& in, Date& d);
 
 private:
-
 	int _year;
-
 	int _month;
-
 	int _day;
-
 };
+ostream& operator<<(ostream& out, const Date& d);
+istream& operator>>(istream& in, Date& d);
