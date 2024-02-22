@@ -26,7 +26,12 @@ public:
 (5)perator new：先开空间，再构造
 (6)perator delete:先析构，再销毁
 
-(7)内存开辟的细节
+(7)开辟内存的格式：
+int* p1 = (int*)operator new(10 * 4);//开辟空间
+int* p2 = new int(10 * 4);//只会初始化分配的内存中的第一个 int 值为 40，而后续的内存不会被初始化，它们的值将是未定义的，可能是随机值。
+int* p3 = new int;//单个变量
+int* p4 = new int[10];//数组形式
+(8)内存开辟的细节
 A* ptr1 = new A;  // operator new + 1次构造
 
 operator new[]，不止对operator new进行封装
@@ -42,7 +47,8 @@ A* ptr2 = new A[10];//40字节
 
 对于内置类型，不需要析构等,因此编译器不额外开辟空间存储元素个数
 int* p1 = new int[10];//40字节
-4.匹配使用，不匹配则结果不确定(operator new[] 和 operator new的区别)
+4.匹配使用，不匹配则结果不确定
+5.operator new[] 和 operator new的区别
 int main()
 {
     //可运行
@@ -53,11 +59,12 @@ int main()
     //原因：开辟44字节空间，但返回的并非头部地址。因此delete从地址的中间开始释放，报错
         //同时，这也是 operator new[] 和 operator new的区别 
     A* p2 = new A[10];
-    delete p2;//从中间释放
+    delete p2;//从中间释放，错误
+        delete []p2];//正确         
 
     return 0;
 }
-5.定位new(效果与new 和 delete 等价)
+6.定位new(效果与new 和 delete 等价)
 (1)功能：显示调用构造函数，对已有空间初始化(一般是配合内存池使用)
 (2)格式：
 new(地址) type
