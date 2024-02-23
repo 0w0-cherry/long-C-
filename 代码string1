@@ -1,0 +1,88 @@
+#define _CRT_SECURE_NO_WARNINGS 1
+#include<iostream>
+using namespace std;
+
+template<class T>//模版参数
+class Stack
+{
+public:
+	void push1(const T& x)
+	{
+		;//
+	}
+	void push2(const T& x);//声明和定义分离
+private:
+	T* _a;
+	int _top;
+	int _capacity;
+};
+//void Stack::push2(const T& x)
+//void Stack::push2(const T& x)
+int main1()
+{
+	Stack<int>a;
+	int num = 10;
+
+	string s0("aaaaaaaaaabfaa");
+	string str;// 生成空字符串
+	string s(str);// 拷贝构造
+
+	int begin = 2;
+	int len = 5;
+	string s1(s0, begin, len);// 将字符串str中从下标begin开始、长度为len的部分作为字符串初值
+	string s2(s0, begin); //字符串str中从下标begin开始到字符串结束的位置作为字符串初值
+	string s(num, 'c');// 生成num个'c'字符的字符串
+
+
+	s0 = s1;
+	return 0;
+}
+
+
+
+//string的遍历方式
+//1.下标+[]
+void test1()
+{
+	string s1("hello");
+	//获取、修改pos位置的值
+	for (size_t i = 0; i < s1.size(); i++)
+	{
+		//与指针解引用不同，此处是函数调用，运算符重载
+		//格式：类名.operator重载的运算符(实参)
+		cout << s1[i] << " ";
+		cout << s1.operator[](i) << " ";
+	}
+
+	string s3("hhh");
+	s3[0]++;
+
+	const string s4("hhh");
+	//s4[0]++;//不能被修改
+	//因此有：
+	//char& operator[] (size_t pos)
+	//const char& operator[] (size_t pos) const;
+	cout << endl;
+
+
+
+	//2.迭代器
+	//标准使用方法：
+	string::iterator i = s3.begin();
+	while (i != s3.end())
+	{
+		cout << *i << " ";
+		i++;
+	}
+	cout << endl;
+
+
+	//3.范围for遍历容器(自动取容器中的数据，自动迭代后移，自动判断结束)
+	//(1)底层逻辑：迭代器(底层代码与迭代器几乎一样，二者赋值时不同)
+	for (auto e : s3)
+	{
+		cout << e << " ";
+	}
+	cout << endl;
+
+}
