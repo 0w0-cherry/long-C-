@@ -1,0 +1,73 @@
+详情了解：cplusplus.com/reference/string/string/string/
+1.sizeof不计算末尾\0,strlen计算
+
+
+
+一.string特点:
+不属于STL(历史原因)，但在归类上可归类到"容器"中(也是数据结构)
+
+二.参数:
+(1)std::string::operator[]
+char& operator[] (size_t pos)
+const char&operator[] (size_t pos) const;//用于传入const对象，const不能被修改，且返回的是引用，所以返回值不能被修改
+(2)string 函数参数
+string(const string& str,size_t pos,size_t len=npos);
+//从当前字符串的pos位置开始，长度为len的部分，作为字符串初值
+
+//若从pos位置起，len长度超过原字符串位置，计算到原字符串末尾停止
+//若len长度采用缺省值(-1)，由于len是size_t类型，所以长度(-1)是2^32-1个字符的长度,而字符串长度不可能为2^32-1
+三. string的构造函数的形式：
+无参(默认)构造：string()
+字符串构造:string(const char* s)
+string拷贝构造(涉及深拷贝)：string(const string& s)
+生成num个'c'字符的字符串：string s(num, 'c');//不常用
+四. string的构造函数的赋值：
+string s1(s0, begin, len);// 将字符串str中从下标begin开始、长度为len的部分作为字符串初值
+string s2(s0, begin); //字符串str中从下标begin开始到字符串结束的位置作为字符串初值
+
+
+常用赋值：s0=s1；
+五.string的遍历方式(各有各的作用)
+1.下标+[](运算符重载)
+void test2()
+{
+    string s1("hello");
+    //获取、修改pos位置的值
+    for (size_t i = 0; i < s1.size(); i++)
+    {
+        //与指针解引用不同，此处是函数调用，运算符重载
+        //格式：类名.operator重载的运算符(实参)
+        cout << s1[i] << " ";
+        cout << s1.operator[](i) << " ";
+    }
+      string s3("hhh");
+     s3[0]++;
+         const string s4("hhh");
+         //s4[0]++;//不能被修改
+         //因此有：
+     //char& operator[] (size_t pos)
+     //const char& operator[] (size_t pos) const;
+  
+    cout << endl;
+}
+2.迭代器，使用的主流(行为像指针,但不是指针)
+格式 string::iterator i//(i存储迭代器，类似指针)
+功能：用于遍历数组、链表、顺序表等，具有通用性
+有效区间:左闭右开[begin,end )
+标准使用方法：
+string::iterator i = s3.begin();//begin()返回第一个有效数据的迭代器
+while (i != s3.end())//end()返回最后一个数据的下一个位置,即'\0'位置
+{
+    cout << *i << " ";
+    i++;
+}
+//数据可读可写
+cout << endl;
+3.范围for遍历容器(自动取容器中的数据，自动迭代后移，自动判断结束)
+(1)底层逻辑：迭代器(底层代码与迭代器几乎一样，二者赋值时不同)
+ string s3("hhh");
+ for (auto e : s3)//将s3的值赋值给e
+    {
+    cout << e << " ";
+    }
+ cout << endl;
