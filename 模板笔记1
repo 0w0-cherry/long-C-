@@ -78,6 +78,12 @@ class A
 {
     //类内成员定义
 }
+int main()
+{
+    //同一类模版实例化出的两个类型
+    Stack<int>a;//类名<参数类型名>变量名
+    Stack<double>b;
+}
 4.函数模板 和 模板函数：函数(的)模板是一个函数家族，模板(的)函数通过函数模板实例化的具体函数
 格式：
 ﻿template<typename T1, typename T2,......,typename Tn>
