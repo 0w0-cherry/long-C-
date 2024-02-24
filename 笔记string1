@@ -1,10 +1,11 @@
 详情了解：cplusplus.com/reference/string/string/string/
 1.sizeof不计算末尾\0,strlen计算
+2.string特点:不属于STL(历史原因)，但在归类上可归类到"容器"中(也是数据结构)
 
 
-
-一.string特点:
-不属于STL(历史原因)，但在归类上可归类到"容器"中(也是数据结构)
+一.string str 与 string str()的区别
+- 前者是定义了string类型的对象str
+- 后者是定义了函数str，函数无参且返回string类型的数据
 
 二.参数:
 (1)std::string::operator[]
