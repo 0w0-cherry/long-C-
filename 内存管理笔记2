@@ -60,7 +60,7 @@ int main()
         //同时，这也是 operator new[] 和 operator new的区别 
     A* p2 = new A[10];
     delete p2;//从中间释放，错误
-        delete []p2];//正确         
+        delete []p2;//正确         
 
     return 0;
 }
@@ -98,3 +98,4 @@ A* p2 = (A*)operator new(sizeof(A));
 3.解决方案：
 (1)事前预防型：智能指针等
 (2)事后查错型：泄漏检测工具等
+
