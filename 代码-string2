@@ -1,0 +1,159 @@
+#include<iostream>
+
+using namespace std;
+
+int main1()
+{
+	string s3="abc";
+
+	//正向迭代器
+	//string::begin,有两种参数：const 和 非const
+	string::iterator it3 = s3.begin();
+	string::const_iterator it33 = s3.begin();//可读不可写
+	while (it3 != s3.end())
+	{
+		*it3 -= 3;
+		it3++;
+	}
+	while (it3 != s3.end())
+	{
+		cout << *it3 << " ";
+		it3++;
+	}
+	cout << endl;
+	//反向迭代器,反向遍历
+	string::reverse_iterator rit = s3.rbegin();
+	string::const_reverse_iterator ritt = s3.rbegin();//可读不可写
+	while (rit != s3.rend())
+	{
+		cout << *rit << " ";
+		rit++;
+	}
+	cout << endl;
+
+	return 0;
+}
+
+//容器的成员函数
+int main2()
+{
+	string s1("hello");
+	cout << s1.size() << endl;//容器的大小
+	cout << s1.length() << endl;//容器的大小，效果完全相同
+
+	cout << s1.empty() << endl;//容器是否为空
+	cout << s1.capacity() << endl; //容器最大的可存储的元素的数量
+	cout << s1.max_size()<<endl;//容器最大的可存储的元素
+
+	return 0;
+}
+
+
+//查看扩容机制(没有明确标准)
+//vs：前面2倍，后面1.5倍
+//g++：2倍
+//计算的空间大小比实际大小少1，末尾'\0'不被算入
+int main3()
+{
+	string s;
+	size_t sz = s.capacity();
+	cout << "capacity changed：" << sz << '\n';
+	cout << "making s grow：\n";
+	for (int i = 0; i < 100; i++)
+	{
+		s.push_back('c');
+		if (sz != s.capacity())
+		{
+			sz = s.capacity();
+			cout << "capacity changed：" << sz << '\n';
+		}
+	}
+	//resize(n)，n小于空间大小
+	//保留前n个数据，并收缩
+	s.resize(10);
+
+	//resize(n)，n大于空间大小
+	//扩容无标准，用'\0'填充扩容的部分
+	s.resize(20);
+
+	//resize(n，'x');n大于空间大小
+	//扩容无标准，用'x'填充扩容的部分
+	s.resize(40,'x');
+
+
+
+	//清除数据，但空间大小不变
+	s.clear();
+	cout << s << endl;
+	cout << s.capacity() << endl;
+	cout << s.size() << endl;
+
+	//缩容到最小16，不能到0，
+	s.shrink_to_fit();
+	cout << s.capacity() << endl;
+	cout << s.size() << endl;
+
+	//扩容，比当前capacity大才会扩
+	s.reserve(200);//没有明确标准
+	cout << s.capacity() << endl;
+	cout << s.size() << endl;
+	return 0;
+}
+
+int main4()
+{
+	//
+	string s1("aaaa");
+	cout << s1[2] << endl;
+	cout << s1.at(2) << endl;
+
+	//对越界的检查不同
+	//s1[15];//断言错误
+	s1.at(15);//需要抛异常
+	try
+	{
+		s1[10];
+	}
+	catch (const exception& e)
+	{
+		cout << e.what() << endl;
+	}
+	return 0;
+}
+
+//添加字符
+//push_back()，append()，operator+=(常用)，assign
+int main5()
+{
+	//push_back()
+
+	//只支持添加单个字符
+	string s1("xhello world");
+	s1.push_back('!');
+	cout << s1 << endl;
+
+	//append()
+
+	//支持添加字符串
+	s1.append("hello bit");
+	cout << s1 << endl;
+
+	//添加多个 单个字符，
+	//若是字符串，则只添加多个"末尾字符"
+	s1.append(10, 'z');
+	s1.append(10, 'za');
+	cout << s1 << endl;
+
+	//添加字符串时，可指定添加的范围
+	string s2(" apple ");
+	s1.append(++s2.begin(), --s2.end());
+
+	//常用：operator+=,支持单字符，多字符
+	string s3("hello world");
+	s3 += ' ';
+	s3 += "apple";
+	cout << s3 << endl;
+
+	//assign()覆盖当前所有内容，了解即可
+	return 0;
+}
