@@ -1,0 +1,9 @@
+1.函数模板的"全展开"是指显式写出函数模板的所有实例化版本
+// 函数模板定义
+template <typename T>
+void func(T value) {
+    // ...
+}
+
+// 全展开示例
+func<int>(5);  // 这是对函数模板 func 的 int 类型的全展开实例化
