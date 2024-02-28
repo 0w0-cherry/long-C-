@@ -1,0 +1,251 @@
+一.迭代器
+1.正向迭代器：begin、end
+(1)参数：const 和 非const
+(2)功能：
+begin()返回首元素地址，end()返回尾部元素的下一个的地址。
+可用于遍历、确定边界等
+(3)使用：
+#include<iostream>
+
+using namespace std;
+
+int main1()
+{
+//正向遍历
+    string s3="abc";
+
+
+    string::iterator it3 = s3.begin();
+    string::const_iterator it33 = s3.begin();//可读不可写
+    while (it3 != s3.end())
+    {
+        *it3 -= 3;
+        it3++;
+    }
+    while (it3 != s3.end())
+    {
+        cout << *it3 << " ";
+        it3++;
+    }
+    cout << endl;
+
+    return 0;
+}
+2.反向迭代器
+(1)参数：const 和 非const
+(2)功能：
+rbegin()返回末尾元素地址，rend()返回首元素的前一个位置的地址。
+可用于遍历、确定边界等
+(3)使用：
+#include<iostream>
+
+using namespace std;
+
+int main1()
+{
+    string s3="abc";
+
+    //反向迭代器,反向遍历
+    string::reverse_iterator rit = s3.rbegin();
+    string::const_reverse_iterator ritt = s3.rbegin();//可读不可写
+    while (rit != s3.rend())
+    {
+        cout << *rit << " ";
+        rit++;//反向遍历，但是++
+    }
+    cout << endl;
+
+    return 0;
+}
+二.扩容
+1.自动扩容机制没有明确标准
+（1）计算的空间大小比实际大小少1，末尾'\0'不被算入
+（2）vs：前面2倍，后面1.5倍
+（3）g++：2倍
+2.reserve指定扩容没有明确标准
+（1）只有比当前capacity大才会扩容
+（2）指定扩容，扩容 reserve(n)，没有明确标准，并非一定为 n
+（3）在知道元素个数的情况下可提前开好空间，避免了扩容，提高了效率
+int main()
+{
+    string s;
+    size_t sz = s.capacity();
+
+
+    for (int i = 0; i < 100; i++)
+    {
+        s.push_back('c');
+        if (sz != s.capacity())
+        {
+            sz = s.capacity();
+            cout << "capacity changed：" << sz << '\n';
+        }
+    }
+
+    //clear清除数据，但空间大小不变
+    s.clear();
+    cout << s << endl;
+    cout << s.capacity() << endl;
+    cout << s.size() << endl;
+
+        //缩容        
+    //最小到16，不能到0，
+    s.shrink_to_fit();
+    cout << s.capacity() << endl;
+    cout << s.size() << endl;
+
+ 
+    //reserve指定大小扩容，比当前capacity大才会扩
+        //在知道元素个数的情况下可提前开好空间，提高效率
+    s.reserve(200);//没有明确标准
+    cout << s.capacity() << endl;
+    cout << s.size() << endl;
+    return 0;
+}
+3.resize重定义空间大小
+（1）resize(n)，n小于空间大小：保留前n个数据，并收缩
+（2）resize(n)，n大于空间大小：扩容无标准，用'\0'填充扩容的部分
+（3）resize(n，'x');n大于空间大小：扩容无标准，用'x'填充扩容的部分
+
+具体使用：
+int main()
+{
+    string s;
+
+    //resize(n)，n小于空间大小
+    //保留前n个数据，并收缩
+    s.resize(10);
+ 
+
+    //resize(n)，n大于空间大小
+    //扩容无标准，用'\0'填充扩容的部分
+    s.resize(20);
+
+    //resize(n，'x');n大于空间大小
+    //扩容无标准，用'x'填充扩容的部分
+    s.resize(40,'x');
+
+    return 0;
+}
+三.string的访问方式
+1.std：：string：：operator[ ] 
+（1）参数：
+char& operator[](size_t pos);
+const char& operator[](size_t pos) const;
+2.std::string::at
+（1）参数：
+char& at(size_t pos);
+const char& at(size_t pos) const;
+int main()
+{
+    
+    string s1("aaaa");
+    cout << s1[2] << endl;
+    cout << s1.at(2) << endl;
+
+    //对越界的检查不同
+    s1[15];//断言错误
+    s1.at(15);//需要抛异常
+    try
+    {
+        s1[10];
+    }
+    catch (const exception& e)
+    {
+        cout << e.what() << endl;
+    }
+    return 0;
+}
+四.添加字符的不同方式
+1.push_back()
+//只支持添加单个字符
+string s1("xhello world");
+s1.push_back('!');
+cout << s1 << endl;
+2.append()
+//1.支持添加字符串
+s1.append("hello bit");
+cout << s1 << endl;
+
+//2.添加多个 单个字符，
+//若是字符串，则只添加多个"末尾字符"
+s1.append(10, 'z');
+s1.append(10, 'za');
+cout << s1 << endl;
+
+//3.添加字符串时，可指定添加的范围
+string s2(" apple ");
+s1.append(++s2.begin(), --s2.end());
+3.assign()
+//覆盖当前所有内容，了解即可
+四.容器的其他成员函数
+1.
+//size(),length(),empty(),capacity(),max_size()
+int main2()
+{
+    string s1("hello");
+        //计算容器的大小，效果完全相同
+    cout << s1.size() << endl;
+    cout << s1.length() << endl;
+
+        //判断容器是否为空，返回数据类型：bool      
+    cout << s1.empty() << endl;
+        //计算容器可存储元素的最大数量
+    cout << s1.capacity() << endl; 
+        //容器可存储的最大的元素的大小           
+    cout << s1.max_size()<<endl;
+
+    return 0;
+}
+2.
+//以下函数都要挪动数据，效率不高
+
+//1.std::string::insert//添加
+//常用:插入整个字符串
+
+string& insert (size_t pos, const char* s);
+
+//2.std::string::erase//删除
+//常用：以pos位置开始，长度为len的字符
+//缺陷：效率太低
+string& earse(size_t pos=0,size_t len=npos);
+
+//3.std::string::replace//替换
+//常用：以pos位置开始的len个字符，替换为整个*s
+string& replace (size_t pos,  size_t len,  const char* s);
+
+//4.std::string::find
+//查找 并 替换
+int main()
+{
+    std::string s2("hello world hello bit");
+    size_t pos = s2.find(' ');
+    while (pos != std::string:: npos)
+    {
+        s2.replace(pos, 1, "%20");
+        pos = s2.find(' ');
+    }
+    std::cout << s2 << std::endl;
+    return 0;
+}
+//高效 "替换"
+int main()
+{
+    std::string s2("hello world hello bit");
+    std::string s3;
+        s3.reserve(s2.size());//提前开空间，提高效率                 
+    for (auto ch : s2)
+    {
+        if (ch != ' ')
+        {
+            s3 += ch;
+        }
+        else
+        {
+            s3 += "%20";
+        }
+    }
+    std::cout << s3 << std::endl;
+        s2.swap(s3);
+    return 0;
+}
