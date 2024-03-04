@@ -1,0 +1,149 @@
+//仅反转字母
+
+class Solution {
+public:
+bool isZiMu(char ch)
+{
+    if(ch>='A' && ch<='Z')
+    return true;
+    if(ch>='a'&&ch<='z')
+    return true;
+
+    return false;
+}
+
+    string reverseOnlyLetters(string s) {
+        int j=s.size()-1;
+        int i=0;
+        while(i<j)
+        {
+            if(  ((s[i]>='a' && s[i]<='z') || (s[i]>='A' && s[i]<='Z'))&&((s[j]>='a' && s[j]<='z') || (s[j]>='A' && s[j]<='Z'))           )
+            {
+                swap(s[i++],s[j--]);
+            }
+            while(i<j &&  !isZiMu(s[i])   )
+            {
+                i++;
+            }
+            if(  i<j && !isZiMu(s[j]) )
+            {
+                j--;
+            }
+        }
+        return s;
+    }
+};
+
+//字符串相加
+class Solution {
+public:
+    string addStrings(string num1, string num2) {
+        string str;
+        int end1=num1.size()-1;
+        int end2=num2.size()-1;
+        int next=0;
+        int val=0;
+        str.reserve(num1.size()>num2.size()?num1.size()+1 : num2.size()+1);
+        while(end1>=0 || end2>=0)
+        {
+            int a1=end1>=0? num1[end1--]-'0':0;
+            int a2=end2>=0? num2[end2--]-'0':0;
+
+            val=a1+a2+next;
+            next=val/10;
+            val=val%10;
+            str+=(val+'0');
+        }
+        if(next==1)
+        {
+            str+=(1+'0');
+        }
+        reverse(str.begin(),str.end());
+        return str;
+    }
+};
+
+//字符串只出现一次的字符
+class Solution {
+public:
+    int firstUniqChar(string s) {
+        int a[256] = {0};
+        int size = s.size();
+        for(int i=0;i<size;i++)
+        {
+              a[a.begin()-'a']++;
+        }
+        for(int i=0;i<size;i++)
+        {
+            if(a[s[i]]==1)
+            {
+                return i;
+            }
+        }
+        return -1;
+
+    }
+};
+
+//验证回文串
+class Solution {
+public:
+    bool isPalindrome(string s) {
+        string str;
+        for(char c:s)
+        {
+            if(c>='a'&&c<='z')
+            str+=c;
+            if(c>='A'&&c<='Z')
+            str+=(c+32);
+            
+        }
+        string s1=str;
+        reverse(str.begin(),str.end());
+        if( str== s1)
+        {
+            return true;
+        }
+        return false;
+    }
+};
+
+//反转单词
+class Solution {
+public:
+
+
+    string reverseWords(string s) {
+        int len=s.length();
+        int i=0;
+        while(i<len)
+        {
+            int begin=i;
+            while(i<len && s[i]!=' ')
+            {
+                i++;
+            }
+            int end=i;
+            reverse(s.begin()+begin,s.begin()+end);
+            while( i<len && s[i]==' '   )
+            {
+                i++;
+            }
+        }
+        return s;
+    }
+};
+
+//部分翻转
+class Solution {
+public:
+    string reverseStr(string s, int k) {
+        int sz=s.size();
+        for(int i=0;i<s.size();i+=k*2)
+        {
+            reverse(s.begin()+i,s.begin()+min(i+k,sz ) );
+            //reverse(s.begin()+i,s.begin()+min(i+k,size()  ) );//编译错误
+        }
+        return s;
+    }
+};
