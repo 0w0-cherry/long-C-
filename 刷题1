@@ -147,3 +147,59 @@ public:
         return s;
     }
 };
+
+//n以内自守数的数量
+自守数是指一个数的平方的尾数等于该数自身的自然数。例如：25^2 = 625，76^2 = 5776，9376^2 = 87909376。请求出n(包括n)以内的自守数的个数
+#include <iostream>
+using namespace std;
+
+int main() {
+    int n;
+
+    cin>>n;
+    int count=0;
+    while(n)
+    {
+    int m=n*n;
+    int a=n,b=1;
+    while(a)
+    {
+        a/=10;
+        b*=10;
+    }
+    m=m%b;
+    if(m==n)
+    count++;
+    n--;
+    }
+    cout<<(count+1);
+}
+
+//小于N的质数数量
+#include <iostream>
+#include<bits/stdc++.h>
+using namespace std;
+
+int main() {
+    int n;cin>>n;
+    int count=0;
+    while(n>1)
+    {
+        int flag=1;
+        int m= sqrt(n)/1;
+        while(m>1)
+        {
+            if(n%m==0)
+            {
+                flag=0;
+                break;
+            }
+            m--;
+        }
+        if(flag==1)
+        count++;
+        n--;
+    }
+    cout<<count;
+    return 0;
+}
