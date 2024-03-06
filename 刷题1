@@ -243,3 +243,25 @@ bool isUnique(char* astr){
     return true;
 
 }
+
+//给定一个字符串，编写一个函数判定其是否为某个回文串的排列之一。
+class Solution {
+public:
+    bool canPermutePalindrome(string s) {
+        int a[600]={0};
+        for(int i=0;i<s.size();i++)
+        {
+            a[s[i]]++;
+        }
+        int flag=0;
+        for(int i=0;i<600;i++)
+        {
+            if(a[i]%2==1)
+            flag++;
+        }
+        if(flag>1)
+        return false;
+        return true;
+
+    }
+};
