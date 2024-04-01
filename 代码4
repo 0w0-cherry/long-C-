@@ -135,7 +135,7 @@ D func()
 	D aa;
 	return aa;
 }
-int main()
+int main11()
 {
 	D aa1;
 	D aa2;
@@ -143,3 +143,34 @@ int main()
 	cout << n << endl;
 	return 0;
 }
+//关于 .* 的使用
+//相当于.(*p)  ,
+//p必须指向类C的成员，而*p则是对指针p解引用，解引用后必须为类C的成员
+struct C
+{
+	int m;
+
+	void f()
+	{
+		int C::* x1 = &C::m; // pointer to member m of C
+		int* x2 = &(C::m); // pointer to member this->m
+	}
+};
+int main()
+{
+	int C::* p = &C::m; // p 是类指向类 C 成员 m 的指针， 
+	// 固定格式 T U::*  
+	// T 是它指向的成员的类型，U 是它指向的类的类型
+	// 这里就是 int C::* ：指向类 C 的 int 成员
+	C c = { 7 };
+	std::cout << c.*p << '\n';   // 访问 p 所指向的字段
+	C* cp = &c;
+	cp->m = 10;
+	std::cout << cp->*p << '\n'; // 访问 p 所指向的字段
+}
+
+
+
+
+
+
