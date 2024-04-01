@@ -9,6 +9,10 @@ using namespace std;
 //	}
 //};
 //typedef void(ob::* pobfunc)();
+//void 表示该成员函数无返回值。
+//ob::* 开始定义一个指向类 ob 的成员函数的指针。
+//pobfunc 是新定义的类型名称，你可以使用这个名称来代替这个复杂的成员函数指针类型。
+//所以，pobfunc 类型代表了类 ob 中无返回值的成员函数的指针。通过这种类型的指针，你可以调用类 ob 的实例的相应成员函数。
 //int main1()
 //{
 //	pobfunc p = &ob::func;
