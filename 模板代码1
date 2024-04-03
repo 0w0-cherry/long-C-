@@ -4,9 +4,6 @@ using namespace std;
 
 
 
-
-
-
 //模板
 
 
@@ -18,61 +15,98 @@ using namespace std;
 //2.函数与模板的选择：
 //(1)模板和函数可同时存在, 但优先选择函数
 //(2)优先选择函数：无论有无模板，只要参数类型完全符合函数(权限只能缩小不能放大)
-//(3)优先先择模板：有函数，但参数不完全匹配。此时有模板
-//(4)强制调用模板：Add<int>(a1,a2)
+// 
+//(3)优先先择模板：
+// 有函数，但参数不完全匹配。此时有模板,但正常情况下模版参数需匹配，且优先选择简单的模版。
+// 不可创建完全相同模版，加&与不加&被视为相同，无法构成重载
+// 若模版不满足则选择需要强转类型的函数
+// 
+//(4)强制调用模板：Add<int>(a1,a2)，无法使用函数
+
+template<class T>
+T Add(const T& left, const T& right)
+{
+	cout << "swap1" << endl;
+
+	return left + right;
+}
+
+//通用加法函数
+template<class T1, class T2>
+T1 Add(T1 left, T2 right)
+{
+	cout << "swap2" << endl;
+
+	return left + right;
+}
+
+//复杂模版被靠后选择
+//template<typename T1,class T2>//
+//void Swap(T1 x, T2 y)
+//{
+//	T1 tmp = x;
+//	x = y;
+//	y = tmp;
+//	cout << "swap30" << endl;
+//}
+template<typename T1, class T2>//
+void Swap(T1 x, T2& y)
+{
+	T1& tmp = x;
+	x = y;
+	y = tmp;
+	cout << "swap3" << endl;
+}
+
 template<typename T>//类型名为 T
 void Swap(T& x, T& y)
 {
 	T tmp = x;
 	x = y;
 	y = tmp;
+	cout <<"swap4" << endl;
 }
-template<class T>
-T Add(const T& left, const T& right)
-{
-	return left + right;
-}
+
 //模板和函数可同时存在
 int Add(const int& left, const int& right)
 {
+	cout <<"swap5" << endl;
+
+
 	return left + right;
 }
 
 
-//通用加法函数
-template<class T1,class T2>
-T1 Add(T1 left, T2 right)
-{
-	return left + right;
-}
-
-int main5()
+int main()
 {
 	//模板实例化：函数函数模板实例化：编译通过推出类型，用函数模板，生成对应函数，这个过程叫做模板实例化
 	//而函数中的参数叫做：模板参数
 	//两次调用的并非是一个函数
 	//编译器自行判断 模板和数据类型，并生成对应函数)
 	int a = 3, b = 2;
-	Swap(a, b);
+	Swap(a, b);//swap4
 
 	char x = 'a',y = 'b';
-	Swap(x, y);
+	Swap(x, y);//swap4
 
-	std::swap(a, b);
-	std::swap(x, y);
+	//从库函数查找库函数
+	//std::swap(a, b);
+	//std::swap(x, y);
 
 
 	//推演
-	//cout << Add(a, y) << endl;//存在歧义
+	cout << Add(y,a) << endl;//存在歧义,优先复杂的通用模版swap2，其次再强转调函数swap5
 	//解决方案1：强转
-	cout << Add((char)a, y) << endl;
-	cout << Add(a, (int)y) << endl;
+	cout << Add((char)a, y) << endl;//强转调用swap1，其次复杂的通用模版swap2，其次函数swap5
+	cout << Add(a, (int)y) << endl;   //强转调用swap1，其次复的通用杂模版swap2，其次函数swap5
 
-	//解决方案2：显示实例化(能正常传参的原因是：发生隐式类型转换)
-	cout << Add<int>(a, y) << endl;//y隐式类型转换成int
-	cout << Add<double>(a, y) << endl;//a、y隐式类型转换成double
-	//解决方案3:加模板参数(如“通用加法函数”)
-	cout << Add(a, y) << endl;
+
+	//解决方案2：显示实例化(能正常传参的原因是：发生隐式类型转换，优先不强转，其次强转)
+	cout << Add<int>(a, y) << endl;//y隐式类型转换成int，优先不强转的复杂的通用模版swap2，其次强转swap1，其次无(由于标注了显示实例化，无法调用函数)
+
+	//cout << Add<double>(a, y) << endl;//a、y隐式类型转换成double，优先不强转的复杂的通用模版swap2，其次强转swap1，其次无(由于标注了显示实例化，无法调用函数)
+	////解决方案3:加模板参数(如“通用加法函数”)
+	//cout << Add(a, y) << endl;
 
 
 
@@ -88,12 +122,21 @@ class Stack
 public:
 	void Push(const T& x)//不能编译器推演实例化，只能显示实例化
 	{}
+	void Push1(const T& x);//声明与定义分离
 private:
 	T* _a;
 	int _top;
 	int _capacity;
 };
-int main()
+
+//声明与定义分离的特殊格式
+template<class T>
+void Stack<T>::Push1(const T& x)
+{
+	;
+}
+
+int main0()
 {
 	Stack<int>a;
 	Stack<double>a1;
