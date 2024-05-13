@@ -1,0 +1,519 @@
+//赋值现代写法
+namespace bit
+{
+	class string
+	{
+	public:
+		typedef char* iterator;
+		typedef const char* const_iterator;
+		const_iterator begin() const
+		{
+			return _str;
+		}
+		const_iterator end() const
+		{
+			return _str + _size;
+		}
+		iterator begin()
+		{
+			return _str;
+		}
+		iterator end()
+		{
+			return _str + _size;
+		}
+
+
+
+		//无参
+		//string()
+		//	:_str(new char[1])
+		//	, _size(0)
+		//	, _capacity(0)
+		//{
+		//	_str[0] = '\0';
+		//}
+		//带参
+		//string(const char* str)
+		//	:_size(strlen(str))
+		//	,_capacity(strlen(str))
+		//	,_str(new char[strlen(str)+1])
+		//{
+		//	strcpy(_str, str);
+		//}
+
+		const char* c_str()
+		{
+			return _str;
+		}
+		//全缺省
+		string(const char* str =""/* "\0" */)//不能给单个字符：'\0'
+			:_size(strlen(str))
+		{
+			_capacity = _size;
+			_str = new char[_capacity + 1];
+			strcpy(_str, str);
+		}
+		//深拷贝。拷贝构造需要使用引用返回，否则造成无限递归
+		//s2(s1)
+		string(const string& s)
+		{
+			_str = new char[s._capacity + 1];
+			_size = s._size;
+			_capacity = s._capacity;
+			strcpy(_str, s._str);
+		}
+		//现代写法
+		//string(const string& s)
+		//{
+		//	string tmp(s._str);
+		//	swap(tmp);
+
+		//}
+
+		string& operator=(string tmp)
+		{
+			//现代写法
+			swap(tmp);
+			return *this;
+		}
+		//s1=s3
+		string& operator=(const string& s)
+		{
+			char* tmp = new char[s._capacity];
+			strcpy(tmp, s._str);
+			delete[] _str;
+			_str = tmp;
+			_capacity = s._capacity;
+			_size = s._size;
+		}
+
+		//析构
+		~string()
+		{
+			delete[] _str;
+			_str = nullptr;
+			_size = _capacity = 0;
+		}
+
+		//遍历
+		size_t size() const
+		{
+			return _size;
+		}
+		size_t capacity() const
+		{
+			return _capacity;
+		}
+		char& operator[](size_t pos)
+		{
+			assert(pos < _size);
+			return _str[pos];
+		}
+		const char& operator[](size_t pos) const
+		{
+			assert(pos < _size);
+			return _str[pos];
+		}
+
+		//扩容
+		void reserve(size_t n)//为当前容器分配一块新内存
+		{
+			if (n > _capacity)
+			{
+				char* tmp = new char[n];
+				strcpy(tmp, _str);
+				delete[] _str;
+				_str = tmp;
+
+				_capacity = n;
+			}
+		}
+		void push_back(char ch)
+		{
+			//扩容2倍
+			if (_capacity == _size)
+			{
+				reserve(_capacity==0?4:2*_capacity);
+			}
+			_str[_size] = ch;
+			_size++;
+			_str[_size] = '\0';
+		}
+		void append(const char* str)
+		{
+			//扩容
+			int len = strlen(str);
+			if (_size + len > _capacity)
+			{
+				reserve(_size + len);
+			}
+			strcpy(_str + _size, str);
+			_size += len;
+
+		}
+
+		//连接
+		string& operator+=(char ch)
+		{
+			push_back(ch);
+			return *this;
+		}
+		string& operator+=(const char* str)
+		{
+			append(str);
+			return *this;
+		}
+		//插入
+		void insert(size_t pos, char ch)
+		{
+			assert(pos <= _size);
+			if (_capacity == _size)
+			{
+				_capacity = _capacity == 0 ? 4 : 2 * _capacity;
+				reserve(_capacity);
+			}
+
+			//for (int i = _size + 1; i > pos; i--)
+			//{
+			//	_str[i] = _str[i - 1];
+			//}
+			for (int i = _size ; i >= (int)pos; i--)//类型提升，小范围转大范围，int转size_t
+			{
+				_str[i+1] = _str[i];
+			}
+			_str[pos] = ch;
+			_size++;
+		}
+		//void insert(size_t pos, const char* str)
+		//{
+		//	assert(pos <= _size);
+		//	size_t len = strlen(str);
+		//	//扩容
+		//	if (len + _size > _capacity)
+		//	{
+		//		reserve(len + _size);
+		//	}
+		//	int end =_size + len;
+		//	int last = _size;
+		//	while (last > pos-1)
+		//	{
+		//		_str[end--] = _str[last--];
+		//	}
+		//	memcpy(_str + pos, str, len);
+		//	_size += len;
+		//}
+		void insert(size_t pos, const char* str)
+		{
+			assert(pos <= _size);
+			size_t len = strlen(str);
+			if (_size + len > _capacity)
+			{
+				// 扩容
+				reserve(_size + len);
+			}
+
+			size_t end = _size + len;
+			while (end > pos + len - 1)
+			{
+				_str[end] = _str[end - len];
+				end--;
+			}
+
+			strncpy(_str + pos, str, len);
+			_size += len;
+		}
+
+
+
+		//删除
+		void erase(size_t pos,size_t len=npos)
+		{
+			assert(pos < _size);
+			if (len == npos || len/*+pos*/>=_size-pos)//len+pos可能会数据溢出，若len为npos-1
+			{
+				_str[pos] = '\0';
+				_size = pos;
+			}
+			else
+			{
+				strcpy(_str + pos, _str + pos + len);
+				_size -= len;
+			}
+		}
+
+		void resize(size_t n, char ch = '\0')
+		{
+			if (n < _size)
+			{
+				_str[n] = '\0';
+				_size = n;
+			}
+			else
+			{
+				reserve(n);
+				for (int i = _size; i < n; i++)
+				{
+					_str[i] = ch;
+				}
+				_str[n] = '\0';
+			}
+		}
+		void swap(string& s)
+		{
+			std::swap(_str, s._str);
+			std::swap(_size, s._size);
+			std::swap(_capacity, s._capacity);
+		}
+
+		//查找并返回下标
+		size_t find(char ch)
+		{
+			for (int i = 0; i < _size; i++)
+			{
+				if (ch == _str[i])
+					return i;
+			}
+			return npos;
+		}
+		size_t find(const char* sub, size_t pos = 0) const
+		{
+			char* p = strstr(_str, sub);//查找子串
+			if (p)
+			{
+				return p - _str;
+			}
+			else
+				return npos;
+		}
+
+		string substr(size_t pos = 0, size_t len = npos)
+		{
+			string ans;
+			if (len > _size - pos)
+			{
+				for (int i = pos; i < _size; i++)
+				{
+					ans += _str[i];
+				}
+			}
+			else
+			{
+				for (int i = pos; i < len + pos; i++)
+				{
+					ans += _str[i];
+				}
+			}
+			return ans;
+		}
+		void clear()
+		{
+			_size = 0;
+			_str[0] = '\0';
+		}
+	private:
+		char* _str=nullptr;
+		int _size=0;
+		int _capacity=0;
+
+	public:
+		static const int npos;
+
+		void swap(string& x, string& y)
+		{
+			x.swap(y);
+		}
+
+
+
+		void test_string1()
+		{
+			string s1("hello");
+			string s2;
+			cout << s1.c_str() << endl;
+			cout << s2.c_str() << endl;
+
+			for (size_t i = 0; i < s1.size(); i++)
+			{
+				_str[i]++;
+			}
+			cout << endl;
+			for (size_t i = 0; i < s1.size(); i++)
+			{
+				cout << _str[i] << " ";
+			}
+			cout << endl;
+		}
+
+		void test_string2()
+		{
+			//非const对象
+			string s3("hello");
+			string::iterator it3 = s3.begin();
+			while (it3 != s3.end())
+			{
+				cout << *it3 << " ";
+				it3++;
+			}
+			cout << endl;
+
+			for (auto e : s3)//范围for的替换并不灵活
+			{
+				cout << e << " ";
+			}
+			cout << endl;
+
+			//const对象
+			string s4("helloa");
+			string::const_iterator it4 = s4.begin();
+			while (it4 != s4.end())
+			{
+				cout << *it4 << " ";
+				it4++;
+			}
+			for (auto e : s4)
+			{
+				cout << e << " ";
+			}
+			cout << endl;
+		}
+
+		void test_string3()
+		{
+			string s3("helloaa");
+			s3.push_back('1');
+			s3.push_back('2');
+
+			cout << s3.c_str() << endl;
+
+			s3 += "yyyy";
+			s3 += 'x';
+			cout << s3.c_str() << endl;
+		}
+
+		
+		void test_string4()
+		{
+			string s1("hello world");
+			cout << s1.c_str() << endl;
+			s1.erase(6, 3);
+			cout << s1.c_str() << endl;
+
+			string s2("hello world");
+			s2.resize(5);
+			cout << s2.c_str() << endl;
+
+
+			//错误1，原因？
+			//s2.resize(20,'x');
+			//cout << s2.c_str() << endl;
+		}
+
+		void test_string5()
+		{
+			string s1("hello world");
+			cout << s1.c_str() << endl;
+
+			string s2(s1);
+			cout << s2.c_str() << endl;
+
+			string s3("xxx");
+			s1 = s3;
+
+		}
+		void test_string6()
+		{
+			string s1("hello");
+			s1.insert(3, "xxx");//错误2：一执行就报错，原因？
+			cout << s1.c_str() << endl;;
+
+			string s2("xxxxx");
+			swap(s1, s2);
+			cout << s1.c_str() << endl;
+			cout << s2.c_str() << endl;
+			s1.swap(s2);
+			cout << s1.c_str() << endl;
+			cout << s2.c_str() << endl;
+		}
+
+	};
+	const int string::npos = -1;
+}
+
+ostream& operator<<(ostream& out, const string& s)
+{
+	for (auto ch : s)
+	{
+		out << ch;
+	}
+	return out;
+}
+
+istream& operator>>(istream& in,  string& s)
+{
+	s.clear();
+	char ch;
+	//in >> ch;
+	ch = in.get();
+	//s.reserve(128);
+	//while (ch != '\n' || ch != ' ')
+	//{
+	//	s += ch;
+	//	ch = in.get();
+	//}
+
+	char buff[128];
+	size_t i = 0;
+	while (ch != ' ' && ch != '\n')
+	{
+		buff[i++] = ch;
+		if (i == 127)
+		{
+			buff[127] = '\0';
+			s += buff;
+			i = 0;
+		}
+		ch = in.get();
+	}
+	if (i > 0)
+	{
+		buff[i] = '\0';
+		s += buff;
+	}
+
+	return in;
+}
+bool operator==(const string& s1, const string& s2)
+{
+	int ret = strcmp(s1.c_str(), s2.c_str());
+	return ret == 0;
+}
+bool operator<(const string& s1, const string& s2)
+{
+	int ret = strcmp(s1.c_str(), s2.c_str());
+	return ret < 0;
+}
+bool operator>(const string& s1, const string& s2)
+{
+	int ret = strcmp(s1.c_str(), s2.c_str());
+	return ret > 0;
+}
+bool operator<=(const string& s1, const string& s2)
+{
+	return s1 == s2 || s1 < s2;
+}
+bool operator>=(const string& s1, const string& s2)
+{
+	return s1 == s2 || s1 > s2;
+}
+
+
+int main()
+{
+	bit::string A("abcde");
+	A.test_string1();
+	A.test_string2();
+	A.test_string4();
+	A.test_string6();
+	return 0;
+}
