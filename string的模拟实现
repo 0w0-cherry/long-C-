@@ -38,16 +38,21 @@ namespace bit
             strcpy(_str, s._str);
         }
 
-        string& operator=(const string& s)
-        {
-            //现代写法
-            if (this != &s)
-            {
-                string tmp(s);
-                this->swap(tmp);
-            }
-            return *this;
+        //string& operator=(const string& s)//s不可改
+        //{
+        //    //现代写法
+        //    if (this != &s)
+        //    {
+        //        string tmp(s);
+        //        swap(tmp);
+        //    }
+        //    return *this;
 
+        //}
+        string& operator=(string ss)//现代写法的优化
+        {
+            swap(ss);//此处的ss是拷贝构造后的结果，与拷贝的sting交换不影响原来的string
+            return *this;
         }
 
         ~string()
