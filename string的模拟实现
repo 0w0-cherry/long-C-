@@ -49,7 +49,7 @@ namespace bit
         //    return *this;
 
         //}
-        string& operator=(string ss)//现代写法的优化
+        string& operator=(string ss)//现代写法的优化，自定义类型传值传参要调用拷贝构造
         {
             swap(ss);//此处的ss是拷贝构造后的结果，与拷贝的sting交换不影响原来的string
             return *this;
