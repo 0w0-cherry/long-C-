@@ -1,0 +1,65 @@
+一.str.reverse
+1.功能：反转字符串
+2.参数：reverse(a, a+n);//n为数组中的元素个数
+3.数据范围：s.begin()-s.end()，范围为最后一个元素的下一个位置
+
+二.str.find
+1.功能：查找元素，返回找到的符合的第一个元素的下标，如果没有找到，那么会返回一个特别的标记npos，一般写作string::npos
+2.参数：size_t find (char c, size_t pos = 0) const;//可控制从哪个下标开始查找，默认从头开始
+3.其他：
+（1）str.rfind（）从后向前查找
+（2）str.find_first_of：在字符串str1中查找字符串str2，若str1有任意一个字符串str2的元素，则匹配成功,返回地址，否则返回string::npos。
+（3）str.find_last_of：find_first_of的逆向查找
+// string::find_first_of
+#include <iostream>       // std::cout
+#include <string>         // std::string
+#include <cstddef>        // std::size_t
+
+int main ()
+{
+  std::string str ("Please, replace the vowels in this sentence by asterisks.");
+  std::size_t found = str.find_first_of("aeiou");
+  while (found!=std::string::npos)
+  {
+    str[found]='*';//将查找的位置的值替换为 '*'
+    found=str.find_first_of("aeiou",found+1);//成功匹配的第二个字符的位置
+  }
+
+  std::cout << str << '\n';
+
+  return 0;
+}
+三.substr
+1.功能：复制子字符串并舍弃原先内容，要求从指定位置开始，并具有指定的长度。如果没有指定长度len或pod+lrn 超出了源字符串的长度，则子字符串将延续到源字符串的结尾。
+2.参数：substr(size_type pos = 0,size_type len = npos)//第pos个位置，len个长度
+#include<iostream>
+#include<string>
+using namespace std;
+int main()
+{
+    string s="axax";
+    string a=s.substr(0,3);
+    string b=s.substr();
+    return 0;
+}
+四.普通函数getline()
+1.参数：istream& getline(istream& is, string& str, char delim);
+（1）is ：表示一个输入流，例如 cin。
+（2）str ：string类型的引用，用来存储输入流中的流信息。
+（3）delim ：char类型的变量，所设置的截断字符；在不自定义设置的情况下，遇到’\n’，则终止输入
+
+2.功能：从输入流中读取信息并存储到str中，可设定截断字符（默认为换行'\n' ）
+3.字符串结束条件：(1)到文件结束，(2)遇到函数的定界符。
+五.拷贝构造的深浅拷贝
+1.深拷贝：
+功能：将一个对象的值复制到另一个对象，并且对于对象中包含的指针，不仅复制指针本身，还复制指针指向的内容
+特点：两个对象拥有独立的内存副本
+使用：需要额外开辟空间
+2.浅拷贝：
+功能：将一个对象的值复制到另一个对象。但对于对象中包含的指针，只复制指针而不复制指针指向的内容
+特点：两个对象会共享相同的内存地址
+目的：若拷贝的资源不需后续修改，能节省空间资源
+使用：
+（1）由于可能会造成多次析构，所以采用引用计数，在析构时先--引用计数。
+（2）若引用计数==0，代表当前是最后一个资源管理对象，那就释放
+（3）插入删除修改时，检查引用计数。若资源独占则不用拷贝，若大于1则先拷贝再写，被称作写时拷贝
