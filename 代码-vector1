@@ -88,3 +88,31 @@ int main()
 	test2();
 	return 0;
 }
+
+
+template<class T>
+class vector
+{
+	T* _a;
+	size_t _size;
+	size_t _capacity;
+};
+class vector<int>
+{
+	int* _a;
+	size_t _size;
+	size_t _capacity;
+};
+class vector<vector<int>>
+{
+	vector<int>* _a;
+	size_t _size;
+	size_t _capacity;
+};
+//访问第i行第j个数据
+//vv.operator[](i).operator[](j);
+
+int main()
+{
+	return 0;
+}
