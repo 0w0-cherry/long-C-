@@ -103,14 +103,13 @@ class vector<int>
 	size_t _size;
 	size_t _capacity;
 };
-class vector<vector<int>>
-{
-	vector<int>* _a;
-	size_t _size;
-	size_t _capacity;
-};
+
 //访问第i行第j个数据
 //vv.operator[](i).operator[](j);
+void test0()
+{
+	vector<vector<int>> vv;
+}
 
 int main()
 {
