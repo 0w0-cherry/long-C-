@@ -1,4 +1,5 @@
 #include<assert.h>
+#include<vector>
 #include<iostream>
 using namespace std;
 namespace bit
@@ -30,12 +31,46 @@ namespace bit
 		{
 			;
 		}
+		vector(initializer_list<T> il)
+		{
+
+		}
 		vector(const vector<T>& v)
 		{
 			reserve(v.capacity());
 			for (auto e : v)
 			{
 				push_back(e);
+			}
+		}
+
+		void swap(vector<T>& v)
+		{
+			std::swap(_start,v._statr);
+			std::swap(_finish, v._finish);
+			std::swap(_endofstorage, v._endofstorage);
+		}
+		// 类模板的成员函数可以是函数模板
+		template <class InputIterator>
+		vector(InputIterator first, InputIterator last)
+		{
+			while (first != last)
+			{
+				push_back(*first);
+				first++;
+			}
+		}
+		vector<T>& operator=(vector<T> v)
+		{
+			swap(v);
+			return *this;
+		}
+		vector(size_t n, const T& val=T())//使用匿名对象，因为对于自定义类型初值不能为0
+		{
+			reserve(n);
+			for (int i = 0; i < n; i++)
+			{
+				push_back(val);
 			}
 		}
 		~vector()
@@ -67,8 +102,12 @@ namespace bit
 			if (n > capacity())
 			{
 				T* tmp = new T[n];
-				memcpy(tmp, _start, sizeof(T) * size());
+				//memcpy(tmp, _start, sizeof(T) * size());//会造成vector<vector<int>>浅拷贝(值拷贝)
 				size_t oldsize = size();
+				for (size_t i = 0; i < oldsize; i++)
+				{
+					tmp[i] = _start[i];
+				}
 				delete[] _start;
 
 				_start = tmp;
@@ -107,7 +146,10 @@ namespace bit
 		{
 			return _start == _finish;
 		}
-		void insert(iterator pos, const T& val)//细节注意：空间因扩容而更新，但pos位置没变
+		//细节注意：空间因扩容而更新，但pos位置没变，造成外部迭代器失效
+		//可加引用，但库中没加，且会导致一些原先的场合无法使用(begin()传入，是临时的，具有常性，需要const修饰)
+		//库中对此不做处理，因此需要额外注意对迭代器it进行更新(对于VS，若使用erase删除后，不能通过it不动来避免迭代器失效)
+		void insert(iterator pos, const T& val)
 		{
 			assert(pos >= _start && pos <= _finish);
 			if (_finish == _endofstorage)
@@ -115,7 +157,7 @@ namespace bit
 				size_t len = pos - _start;
 				reserve(capacity() == 0 ? 4 : 2 * capacity());
 				//更新pos位置
-				pos = _start + len;
+				pos = _start + len;//
 			}
 			iterator it = _finish-1;
 			while (it >= pos)
@@ -126,6 +168,26 @@ namespace bit
 			*pos = val;
 			++_finish;
 		}
+
+		//迭代器失效的更新方式
+		//删除偶数
+		//
+		//void erase_even()
+		//{
+		//	//非std的this需要与非std的it对应
+		//	vector<int>::iterator it = this->begin();
+		//	while (it != end())//隐含this指针
+		//	{
+		//		if (*it % 2 == 0)
+		//		{
+		//			it = erase(it);//库中对迭代器的更新方式(erase后返回下一个元素的位置)
+		//		}
+		//		else
+		//		{
+		//			++it;
+		//		}
+		//	}
+		//}
 		void erase(iterator pos)
 		{
 			assert(pos >= _start && pos <= _finish);
@@ -198,46 +260,121 @@ namespace bit
 		v.insert(v.begin(), 20);
 		v.resize(20);
 		print_vector(v);
-		//for (size_t i = 0; i < v.size(); i++)
-		//{
-		//	cout << v[i] << " ";
-		//}
-		//cout << endl;
+		for (size_t i = 0; i < v.size(); i++)
+		{
+			cout << v[i] << " ";
+		}
+		cout << endl;
 
-		//vector<int>::iterator it = v.begin();
-		//while (it != v.end())
-		//{
-		//	cout << (*it)++ << " ";
-		//}
-		//cout << endl;
+		vector<int>::iterator it = v.begin();
+		while (it != v.end())
+		{
+			cout << *it << " ";
+			it++;
+		}
+		cout << endl;
 
-		//for (auto e : v)
-		//{
-		//	cout << e << " ";
-		//}
-		//cout << endl;
+		for (auto e : v)
+		{
+			cout << e << " ";
+		}
+		cout << endl;
 	}
-	//void test2()
-	//{
-	//	int i = 1;
-	//	int j = int();
-	//	int k = int(2);
+	void test2()
+	{
+		int i = 1;
+		int j = int();
+		int k = int(2);
 
-	//	vector<int> v1;
-	//	v1.push_back(2);
-	//	v1.push_back(2);
-	//	v1.push_back(5);
-	//	v1.push_back(4);
+		vector<int> v1;
+		v1.push_back(2);
+		v1.push_back(2);
+		v1.push_back(5);
+		v1.push_back(4);
 
-	//	v1.resize(10);
-	//	//print_vector(v1);
-	//}
+		v1.resize(10);
+		print_vector(v1);
+		vector<int> v3(v1.begin(), v1.end());
+		print_vector(v3);
+	}
+	void test3()
+	{
+		auto x = { 1,2,3,6,5,4,7 };
+		initializer_list<int> y = { 1,2,5,4,5 };//使用 '{}'被识别成的类型
+		cout << sizeof(x) << endl;//该类型由2个指针组成
+
+
+		//单参数构造函数，隐式类型转换
+		string str = "111";//构造+拷贝构造-->直接构造
+		//string& str1 = "111";//类型转换会产生临时变量，临时变量具有常性需要加const
+
+		const string& str1 = "111";//构造临时对象，并引用
+
+		//使用initializer_list类型初始化vector类型数据
+		vector<int> v1 = { 12,3,6,5,4,7,8 };//构造+拷贝构造-->直接构造
+
+
+
+		//隐式类型转化+优化
+		vector<int> v3 = { 12,3,6,5,4,7,8 };
+		//直接构造
+		vector<int> v4({ 12,3,6,5,4,7,8 });
+
+		int a = 1;
+		//不推荐写法
+		int b = { 1 };
+		int c({ 1 });
+	}
+
+	void test4()
+	{
+		vector<int> v1;
+		v1.push_back(5);
+		v1.push_back(7);
+		v1.push_back(1);
+		v1.push_back(5);
+		print_vector(v1);
+
+		vector<int>::iterator it = v1.begin() + 3;
+		v1.insert(it, 40);//insert可能会扩容，并使地址改变，导致迭代器it失效
+		print_vector(v1);
+		cout << *it << endl;
+
+		//v1.erase_even();
+	}
+
+	//迭代器失效的更新方式
+    //删除偶数
+	void erase_even()
+	{
+		std::vector<int>  v1;
+		v1.push_back(5);
+		v1.push_back(4);
+		v1.push_back(4);
+		v1.push_back(1);
+
+		//std的v1需要与std的it对应
+		std::vector<int>::iterator it = v1.begin();
+		while (it != v1.end())//隐含this指针
+		{
+			if (*it % 2 == 0)
+			{
+				it = v1.erase(it);//库中对迭代器的更新方式(erase后返回下一个元素的位置)
+			}
+			else
+			{
+				++it;
+			}
+		}
+	}
 }
-#define _CRT_SECURE_NO_WARNINGS 1
 #include"标头.h"
 
 int main()
 {
 	bit::test1();
+	bit::test2();
+	bit::test3();
+	bit::test4();
 	return 0;
 }
