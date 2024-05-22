@@ -1,0 +1,71 @@
+
+https://www.nowcoder.com/practice/e8a1b01a2df14cb2b228b30ee6a92163?tpId=13&&tqId=11181&rp=1&ru=/activity/oj&qru=/ta/coding-interviews/question-ranking
+class Solution {
+public:
+    /**
+     * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
+     *
+     * 
+     * @param numbers int整型vector 
+     * @return int整型
+     */
+    int MoreThanHalfNum_Solution(vector<int>& numbers) {
+        // write code here
+        int cond=-1;
+        int cnt=0;
+        for(int i=0;i<numbers.size();i++)
+        {
+            if(cnt==0)
+            {
+            cond=numbers[i];
+            cnt++;
+            }
+            else
+            {
+                if(cond==numbers[i])cnt++;
+                else
+                cnt--;
+            }
+        }
+        return cond;
+
+    }
+};
+
+
+
+https://leetcode.cn/problems/remove-duplicates-from-sorted-array/
+解法一
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        if(nums.size()==1)
+        return 1;
+        vector<int>::iterator it=nums.begin();
+        vector<int>::iterator it1=it+1;
+        while(it!=nums.end())
+        {
+            while(it1!=nums.end() && *it1==*it)
+            it1++;
+            it=nums.erase(++it,it1);
+            it1=it;
+            it1++;
+        }
+        return nums.size();
+    }
+};
+解法二
+class Solution {
+public:
+    int removeDuplicates(vector<int>& nums) {
+        int j=0;
+        for(int i=1;i<nums.size();i++)
+        {
+            if(nums[j]!=nums[i])
+            {
+                nums[++j]=nums[i];
+            }
+        }
+        return j+1;
+    }
+};
