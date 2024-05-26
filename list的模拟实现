@@ -1,0 +1,345 @@
+#pragma once
+#include<assert.h>
+#include<iostream>
+using namespace std;
+namespace bit
+{
+	template<class T>
+	struct ListNode
+	{
+		ListNode<T>* _next;
+		ListNode<T>* _prev;
+		T _data;
+		ListNode(const T& x = T())
+			:_next(nullptr)
+			,_prev(nullptr)
+			,_data(x)
+		{
+			;
+		}
+	};
+	template<class T>
+	struct ListIterator
+	{
+		typedef ListNode<T> Node;
+		typedef ListIterator<T> Self;
+		Node* _node;
+
+		ListIterator(Node* node)
+			:_node(node)
+		{}
+		T& operator*()
+		{
+			return _node->_data;
+		}
+		T* operator->()
+		{
+			return &_node->_data;
+		}
+		//++
+		Self& operator++()
+		{
+			_node = _node->_next;
+			return *this;//返回的是原先节点进1后的节点
+		}
+		Self operator++(int )
+		{
+			Self tmp(*this);
+			_node = _node->_next;//原先节点进1
+			return tmp;//返回的是原先节点的拷贝
+		}
+		//--
+		Self& operator--()
+		{
+			_node = _node->_prev;
+			return *this;//返回的是原先节点进1后的节点
+		}
+		Self operator--(int)
+		{
+			Self tmp(*this);
+			_node = _node->_prev;//原先节点进1
+			return tmp;//返回的是原先节点的拷贝
+		}
+
+		bool operator!=(const Self& it)
+		{
+			return _node != it._node;
+		}
+		bool operator==(const Self& it)
+		{
+			return _node == it._node;
+		}
+	};
+
+	template<class T>
+	struct ListConstIterator
+	{
+		typedef ListNode<T> Node;
+		typedef ListIterator<T> Self;
+		Node* _node;
+
+		ListConstIterator(Node* node)
+			:_node(node)
+		{}
+		const T& operator*()
+		{
+			return _node->_data;
+		}
+		const T* operator->()
+		{
+			return &_node->_data;
+		}
+		//++
+		Self& operator++()
+		{
+			_node = _node->_next;
+			return *this;//返回的是原先节点进1后的节点
+		}
+		Self operator++(int)
+		{
+			Self tmp(*this);
+			_node = _node->_next;//原先节点进1
+			return tmp;//返回的是原先节点的拷贝
+		}
+		//--
+		Self& operator--()
+		{
+			_node = _node->_prev;
+			return *this;//返回的是原先节点进1后的节点
+		}
+		Self operator--(int)
+		{
+			Self tmp(*this);
+			_node = _node->_prev;//原先节点进1
+			return tmp;//返回的是原先节点的拷贝
+		}
+
+		bool operator!=(const Self& it)
+		{
+			return _node != it._node;
+		}
+		bool operator==(const Self& it)
+		{
+			return _node == it._node;
+		}
+	};
+	template<class T>
+	class list
+	{
+		typedef ListNode<T> Node;
+	public:
+		typedef ListIterator<T> iterator;
+		typedef ListConstIterator<T> const_iterator;
+
+
+	
+
+		//const迭代器需要的是迭代器指向的内容不能修改，
+		//因此，const iterator不是需要的迭代器
+		iterator begin() const
+		{
+			//return iterator(_head->_next);//返回匿名对象
+
+			iterator it(_head->_next);
+			return it;//返回有名对象
+		}
+		iterator end() const
+		{
+			return iterator(_head);
+		}
+		iterator begin()
+		{
+			return _head->_next;
+		}
+		iterator end()
+		{
+			return iterator(_head);
+		}
+		list()
+		{
+			_head = new Node;
+			_head->_next = _head;
+			_head->_prev = _head;
+		}
+		void swap(list<T>& It)
+		{
+			std::swap(_head, It._head);
+		}
+		list<T>& operator=(list<T> It)
+		{
+			swap(It);
+			return *this;
+		}
+		void clear()
+		{
+			iterator it = begin();
+		    while (it != end())
+			{
+				it = erase(it);
+		    }
+		}
+		//一般需要析构，说明需要释放空间，就需要自己写深拷贝
+		//不需要析构，一般默认浅拷贝即可
+		//特殊情况：多个指针同时指向同一位置，需要析构但只要浅拷贝
+		~list()
+		{
+			clear();
+			delete _head;
+			_head = nullptr;
+		}
+		//void push_back(const T& x)
+		//{
+		//	Node* newnode = new Node(x);
+		//	Node* tail = _head->_prev;
+
+		//	tail->_next = newnode;
+		//	newnode->_prev = tail;
+		//	newnode->_next = _head;
+		//	_head->_prev = newnode;
+		//}
+		void push_back(const T& x)
+		{
+			insert(end(), x);
+		}
+		void push_front(const T& x)
+		{
+			insert(begin(), x);
+		}
+		void pop_back()
+		{
+			erase(--end());
+		}
+		void pop_front()
+		{
+			erase(begin());
+		}
+		void insert(iterator pos, const T& val)
+		{
+			Node* newnode = new Node(val);
+			Node* cur = pos._node;
+			Node* a = cur->_prev;
+
+			a->_next = newnode;
+			newnode->_prev = a;
+			newnode->_next = cur;
+			cur->_prev = newnode;
+		}
+	    iterator erase(iterator pos)
+		{
+			Node* cur = pos._node;
+			Node* prev = cur->_prev;
+			//Node* next = cur->_next;
+
+			prev->_next = cur->_next;
+			cur->_next->_prev = prev;
+			delete cur;
+
+			return iterator(prev->_next);
+		}
+		size_t size() const
+		{
+			int count = 0;
+			list<int>::iterator it = begin();
+			while (it != end())
+			{
+				count++;
+				it++;
+			}
+			return count;
+		}
+		bool empty()
+		{
+			return _head->_next == _head;
+		}
+	private:
+		Node* _head;
+	};
+
+
+	void test1()
+	{
+		list<int> It;
+		It.push_back(5);
+		It.push_back(1);
+		It.push_back(3);
+		It.push_back(5);
+		It.push_back(4);
+		It.push_front(4);
+		It.pop_back();
+		It.pop_front();
+
+
+		list<int>::iterator it = It.begin();
+		while (it != It.end())
+		{
+			cout << *it << " ";
+			++it;
+		}
+		cout << endl;
+		for (auto e : It)
+		{
+			cout << e << " ";
+		}
+		cout <<endl;
+	}
+	struct A
+	{
+		int _a1;
+		int _a2;
+		A(int a = 0,int b=0)
+			:_a1(a)
+			,_a2(b)
+		{}
+	};
+	void test2()
+	{
+		//多参数的隐式类型转换：{ }
+		list<A> It;
+		A aa1(1, 1);
+		A aa2 = { 1,1 };
+
+
+		It.push_back(aa1);//有名对象
+		It.push_back(A(2,2));//匿名对象
+		It.push_back({3,3});//类型转换会构造临时对象
+
+		list<A>::iterator it = It.begin();
+		while (it != It.end())
+		{
+			//cout << (*it)._a1 << ":" << (*it)._a1 << endl;
+			cout << it->_a1 << ":" << it->_a2 << endl;//
+			++it;
+		}
+		cout << endl;
+	}
+
+	void PrintfList(const list<int>& clt)
+	{
+		list<int>:: iterator it = clt.begin();
+		while (it != clt.end())
+		{
+			cout << *it << " ";
+			it++;
+		}
+		cout << endl;
+	}
+	void test3()
+	{
+		list<int> It;
+		It.push_back(1);
+		It.push_back(4);
+		It.push_back(5);
+		It.push_back(2);
+		It.push_back(5);
+		It.push_back(5);
+
+
+		PrintfList(It);
+	}
+}
+
+int main()
+{
+	bit::test3();
+	return 0;
+}
