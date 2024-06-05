@@ -1,0 +1,108 @@
+
+https://leetcode.cn/problems/evaluate-reverse-polish-notation/
+class Solution {
+public:
+    int evalRPN(vector<string>& tokens) {
+        stack<int> st;
+        set<string> s={"+","-","*","/"};
+        for(auto e:tokens)
+        {
+            if(s.find(e)!=s.end())
+            {
+                //是操作符
+                int right=st.top();
+                st.pop();
+                int left=st.top();
+                st.pop();
+                switch(e[0])//取单字符(运算符)
+                {
+                    case '+':
+                    st.push(left+right);
+                    break;
+
+                    case '-':
+                    st.push(left-right);
+                    break;
+
+                    case '*':
+                    st.push(left*right);
+                    break;
+
+                    case '/':
+                    st.push(left/right);
+                    break;
+
+                }
+            }
+            else
+            {
+                //是操作数
+                st.push(stoi(e));
+            }
+        }
+        return st.top();
+    }
+};
+
+https://www.nowcoder.com/practice/d77d11405cc7470d82554cb392585106?tpId=13&tqId=11174&ru=/exam/oj
+class Solution {
+public:
+    /**
+     * 代码中的类名、方法名、参数名已经指定，请勿修改，直接返回方法规定的值即可
+     *
+     * 
+     * @param pushV int整型vector 
+     * @param popV int整型vector 
+     * @return bool布尔型
+     */
+    bool IsPopOrder(vector<int>& pushV, vector<int>& popV) {
+        // write code here
+        int pushi=0,popi=0;
+        stack<int> st;
+        while( pushi<pushV.size())
+        {
+            st.push(pushV[pushi++]);
+            while(!st.empty() && st.top()==popV[popi])
+            {
+                popi++;
+                st.pop();
+            }
+        }
+        return st.empty();
+    }
+};
+
+https://leetcode.cn/problems/min-stack/description/
+class MinStack {
+public:
+    MinStack() {
+
+    }
+    
+    void push(int val) {
+        st.push(val);
+        if(minst.empty() || val<=minst.top())
+        {
+            minst.push(val);
+        }
+    }
+    
+    void pop() {
+        if(st.top()==minst.top())
+        {
+            minst.pop();
+        }
+        st.pop();
+    }
+    
+    int top() {
+        return st.top();
+    }
+    
+    int getMin() {
+        return minst.top();
+    }
+
+    stack<int> st;
+    stack<int> minst;
+};
